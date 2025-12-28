@@ -25,6 +25,8 @@ print("c = ", c)
 import numpy as np
 import pyvista as pv
 
+import mycommon
+
 num_pts = 50000
 indices = np.arange(0, num_pts, dtype=float) + 0.5
 
@@ -46,7 +48,14 @@ point_cloud = pv.PolyData(np.c_[x, y, z])
 surface = point_cloud.delaunay_3d().extract_surface()
 #surface.plot(show_edges=True, color=True, show_grid=True)
 
-fout="noisy_sigma=" + str(sigma) +  "_ellipsoid_a=" + str(a) + "_b=" + str(b) + "_c=" + str(c) + ".stl"
+#-------------
+
+##
+outfile=  mycommon.output_dir + "/noisy_sigma=" + str(sigma) +  "_ellipsoid_a=" + str(a) + "_b=" + str(b) + "_c=" + str(c) 
+##------------------------
+
+fout= outfile +  ".stl"
+
 surface.save(fout)
 
 print("Noisy stl file written to ", fout)
@@ -66,7 +75,5 @@ points[:,1] = y
 points[:,2] = z
 
 
-#outfile="POINT_noisy_sigma=" + str(sigma) +  "_ellipsoid_a=" + str(a) + "_b=" + str(b) + "_c=" + str(c)
-outfile="point_cloud_noisy_sigma=" + str(sigma) +  "_ellipsoid_a=" + str(a) + "_b=" + str(b) + "_c=" + str(c) 
 np.save(outfile, points)
 print('Point cloud saved to ', outfile + ".npy")

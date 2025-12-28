@@ -6,6 +6,8 @@
 import numpy as np
 import pyvista as pv
 
+import mycommon
+
 num_pts = 1000
 indices = np.arange(0, num_pts, dtype=float) + 0.5
 
@@ -22,7 +24,12 @@ point_cloud = pv.PolyData(np.c_[x, y, z])
 surface = point_cloud.delaunay_3d().extract_surface()
 surface.plot(show_edges=True, color=True, show_grid=True)
 
-fout="sphere_R=" + str(R) +  ".stl"
+
+##
+outfile=  mycommon.output_dir + "/sphere_R=" + str(R)
+##------------------------
+
+fout= outfile +  ".stl"
 surface.save(fout)
 
 print("Stl file written to ", fout)
@@ -37,6 +44,6 @@ points[:,1] = y
 points[:,2] = z
 
 
-outfile="sphere_R=" + str(R)
+
 np.save(outfile, points)
 print('Point cloud saved to ', outfile + ".npy")

@@ -18,6 +18,8 @@ print("c = ", c)
 import numpy as np
 import pyvista as pv
 
+import mycommon
+
 num_pts = 1000
 indices = np.arange(0, num_pts, dtype=float) + 0.5
 
@@ -31,9 +33,25 @@ z =  c*np.cos(phi)
 point_cloud = pv.PolyData(np.c_[x, y, z])
 surface = point_cloud.delaunay_3d().extract_surface()
 surface.plot(show_edges=True, color=True, show_grid=True)
+##
+outfile=  mycommon.output_dir + "/ellipsoid_a=" + str(a) + "_b=" + str(b) + "_c=" + str(c) 
+##------------------------
 
-fout="ellipsoid_a=" + str(a) + "_b=" + str(b) + "_c=" + str(c) + ".stl"
+fout= outfile +  ".stl"
 surface.save(fout)
 
 print("stl file written to ", fout)
 
+# direct write of point cloud
+
+dim = len(x)
+points = np.zeros((dim, 3))
+
+points[:,0] = x
+points[:,1] = y
+points[:,2] = z
+
+
+
+np.save(outfile, points)
+print('Point cloud saved to ', outfile + ".npy")

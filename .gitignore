@@ -11,3 +11,6 @@
 *.vrb
 develop
 configs_fix_8888
+
+readme_conda
+readme_install
