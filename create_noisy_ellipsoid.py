@@ -1,0 +1,72 @@
+# https://stackoverflow.com/questions/47485235/i-want-to-make-evenly-distributed-sphere-in-vtk-python
+
+#
+#  Add random noise to sphere
+#
+# https://docs.pyvista.org/version/stable/
+
+#
+#  https://mathworld.wolfram.com/Ellipsoid.html
+#
+import random
+
+a = 1
+b = 2
+c = 3
+
+# random error
+sigma = 0.1 
+
+print("Parameters of Ellipsoid")
+print("a = ", a)
+print("b = ", b)
+print("c = ", c)
+
+import numpy as np
+import pyvista as pv
+
+num_pts = 50000
+indices = np.arange(0, num_pts, dtype=float) + 0.5
+
+phi = np.arccos(1 - 2*indices/num_pts)
+theta = np.pi * (1 + 5**0.5) * indices
+
+
+
+x_ =  a*np.cos(theta) * np.sin(phi)*(1  +  random.gauss(0, sigma) )
+y_ =  b*np.sin(theta) * np.sin(phi)*(1  +  random.gauss(0, sigma) )
+z_ =  c*np.cos(phi)                *(1  +  random.gauss(0, sigma) )
+
+x = np.array( [xx + a*random.gauss(0, sigma) for xx in x_ ])
+y = np.array( [yy + b*random.gauss(0, sigma) for yy in y_ ])
+z = np.array( [zz + c*random.gauss(0, sigma) for zz in z_ ])
+
+
+point_cloud = pv.PolyData(np.c_[x, y, z])
+surface = point_cloud.delaunay_3d().extract_surface()
+#surface.plot(show_edges=True, color=True, show_grid=True)
+
+fout="noisy_sigma=" + str(sigma) +  "_ellipsoid_a=" + str(a) + "_b=" + str(b) + "_c=" + str(c) + ".stl"
+surface.save(fout)
+
+print("Noisy stl file written to ", fout)
+
+
+#x = points[:,0]
+#y = points[:,1]
+#z = points[:,2]
+
+# direct write of point cloud
+
+dim = len(x)
+points = np.zeros((dim, 3))
+
+points[:,0] = x
+points[:,1] = y
+points[:,2] = z
+
+
+#outfile="POINT_noisy_sigma=" + str(sigma) +  "_ellipsoid_a=" + str(a) + "_b=" + str(b) + "_c=" + str(c)
+outfile="point_cloud_noisy_sigma=" + str(sigma) +  "_ellipsoid_a=" + str(a) + "_b=" + str(b) + "_c=" + str(c) 
+np.save(outfile, points)
+print('Point cloud saved to ', outfile + ".npy")
